@@ -17,7 +17,6 @@ class CompanyObserver
     {
         $company->url = Str::slug($company->name);
         $company->uuid = Str::uuid();
-        $company->image = "nao-informado.png";
     }
 
     /**

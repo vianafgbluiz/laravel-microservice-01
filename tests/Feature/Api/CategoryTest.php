@@ -21,7 +21,7 @@ class CategoryTest extends TestCase
         Category::factory()->count(6)->create();
 
         $response = $this->getJson($this->endpoint);
-        $response->assertJsonCount(6, 'data.categories');
+        $response->assertJsonCount(6, 'data');
 
         $response->assertStatus(200);
     }
