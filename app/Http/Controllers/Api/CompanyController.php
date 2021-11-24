@@ -6,15 +6,21 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUpdateCompanyRequest;
 use App\Http\Resources\CompanyResource;
 use App\Models\Company;
+use App\Services\EvaluationService;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
 
     protected $repository;
+    protected $evaluationService;
 
-    public function __construct(Company $model)
+    public function __construct(
+        Company $model,
+        EvaluationService $evaluationService
+    )
     {
+        $this->evaluationService = $evaluationService;
         $this->repository = $model;
     }
 
@@ -31,7 +37,6 @@ class CompanyController extends Controller
         );
 
         return response()->json($data);
-//        return CompanyResource::collection($companies);
     }
 
     public function store(StoreUpdateCompanyRequest $request)
@@ -46,22 +51,26 @@ class CompanyController extends Controller
             ]
         );
 
-        return response()->json($data, 200);
+        return response()->json($data, 201);
     }
 
     public function show($uuid)
     {
         $company = $this->repository->with('category')->where('uuid', $uuid)->firstOrFail();
 
-        $data = array(
-            'success' => true,
-            'message' => 'Sucesso ao exibir empresa',
-            'data' => [
-                'company' => new CompanyResource($company)
-            ]
-        );
+        $evaluations = $this->evaluationService->getEvaluationsCompany($uuid);
 
-        return response()->json($data, 200);
+//        $data = array(
+//            'success' => true,
+//            'message' => 'Sucesso ao exibir empresa',
+//            'data' => [
+//                'company' =>
+//            ]
+//        );
+
+        return (new CompanyResource($company))->additional([
+            'evaluations' => $evaluations->json()['data']['evaluations']
+        ]);
     }
 
     public function update(StoreUpdateCompanyRequest $request, $uuid)

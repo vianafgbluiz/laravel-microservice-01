@@ -48,7 +48,7 @@ class CategoryController extends Controller
             ]
         );
 
-        return response()->json($data, 200);
+        return response()->json($data, 201);
     }
 
     public function show($url)
@@ -91,6 +91,6 @@ class CategoryController extends Controller
             'message' => 'Sucesso ao remover a categoria'
         );
 
-        return response()->json($data, 200);
+        return response()->json($data, 204);
     }
 }
